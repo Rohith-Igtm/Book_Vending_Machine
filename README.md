@@ -1,9 +1,4 @@
-# Book_Vending_Machine
-Perfect! Here's a **clean, short, and clear `README.md`** you can directly copy-paste to your GitHub repo:
-
----
-
-## 📚 Book Vending Machine (ESP32 + RFID + Firebase)
+# 📚 Book Vending Machine
 
 A smart book vending machine system using **ESP32**, **RFID**, and **Firebase** for **student authentication and book issue logging**.
 
