@@ -6,12 +6,12 @@
 #include <MFRC522.h>
 
 // WiFi Credentials
-#define WIFI_SSID "Wifi_name"
-#define WIFI_PASSWORD "wifi_password"
+#define WIFI_SSID "Redmi Note 7 Pro"
+#define WIFI_PASSWORD "rohithaa"
 
 // Firebase Credentials
-#define FIREBASE_HOST "url_from_firebase"
-#define FIREBASE_API_KEY "Web_API_Key"
+#define FIREBASE_HOST "book-vending-52801-default-rtdb.asia-southeast1.firebasedatabase.app"
+#define FIREBASE_API_KEY "AIzaSyCyNs09bLpZ_t9KSTDkXAEv5fH6JuqQluU"
 #define FIREBASE_EMAIL "bookvending@gmail.com"
 #define FIREBASE_PASSWORD "bookvending"
 
@@ -35,8 +35,8 @@ int button4 = 25;
 #define RST_PIN 22
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-String authorizedUID1 = "UID_of_RFID_Card1";
-String authorizedUID2 = "UID_of_RFID_Card2";
+String authorizedUID1 = "F380FA2E";
+String authorizedUID2 = "B3876AF5";
 String currentUser = "";
 bool userAuthorized = false;
 bool bookTaken = false;
@@ -125,16 +125,16 @@ void checkRFID() {
   Serial.println("RFID UID: " + uid);
 
   if (uid == authorizedUID1) {
-    currentUser = "Student 1";
+    currentUser = "Rohith";
     userAuthorized = true;
     bookTaken = false;
-    Serial.println("Access Granted: Shabari");
+    Serial.println("Access Granted: Rohith");
   }
   else if (uid == authorizedUID2) {
-    currentUser = "Student 2";
+    currentUser = "Siddarth";
     userAuthorized = true;
     bookTaken = false;
-    Serial.println("Access Granted: Kishore");
+    Serial.println("Access Granted: Siddarth");
   }
   else {
     Serial.println("Access Denied");
@@ -142,8 +142,14 @@ void checkRFID() {
     currentUser = "";
   }
 
+  // End the current RFID session
   mfrc522.PICC_HaltA();
   mfrc522.PCD_StopCrypto1();
+
+  // Wait until the card is removed before allowing another scan
+  while (mfrc522.PICC_IsNewCardPresent()) {
+    delay(50);
+  }
 }
 
 void dispenseBook(int rotationAngle, String bookName) {
@@ -172,26 +178,33 @@ String getCurrentTime() {
 }
 
 void sendToFirebase(String studentID, String bookName) {
-  String path = "/logs/" + String(millis());
+  FirebaseJson json;
   String timestamp = getCurrentTime();
 
-  if (Firebase.setString(fbdo, path + "/student", studentID))
-    Serial.println("✔ Student ID sent");
-  else Serial.println("❌ Failed to send student ID: " + fbdo.errorReason());
+  // Build a JSON object with your log data
+  json.add("student", studentID);
+  json.add("book", bookName);
+  json.add("timestamp", timestamp);
 
-  if (Firebase.setString(fbdo, path + "/book", bookName))
-    Serial.println("✔ Book name sent");
-  else Serial.println("❌ Failed to send book name: " + fbdo.errorReason());
-
-  if (Firebase.setString(fbdo, path + "/timestamp", timestamp))
-    Serial.println("✔ Timestamp sent");
-  else Serial.println("❌ Failed to send timestamp: " + fbdo.errorReason());
+  // Push the JSON to Firebase; this creates a unique key that sorts by time
+  if (Firebase.pushJSON(fbdo, "/logs", json))
+    Serial.println("✔ Data sent to Firebase");
+  else 
+    Serial.println("❌ Failed to send data: " + fbdo.errorReason());
 
   Serial.println("Data sent to Firebase:");
   Serial.println("Student: " + studentID);
   Serial.println("Book: " + bookName);
   Serial.println("Timestamp: " + timestamp);
 }
+
+void resetSession() {
+  // Optional: reset any session data if needed
+  userAuthorized = false;
+  bookTaken = false;
+  currentUser = "";
+}
+
 
 
 
