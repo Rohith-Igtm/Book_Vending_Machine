@@ -6,12 +6,12 @@
 #include <MFRC522.h>
 
 // WiFi Credentials
-#define WIFI_SSID "Redmi Note 7 Pro"
-#define WIFI_PASSWORD "rohithaa"
+#define WIFI_SSID "Wifi_name"
+#define WIFI_PASSWORD "wifi_password"
 
 // Firebase Credentials
-#define FIREBASE_HOST "https://book-vending-52801-default-rtdb.asia-southeast1.firebasedatabase.app"
-#define FIREBASE_API_KEY "AIzaSyCyNs09bLpZ_t9KSTDkXAEv5fH6JuqQluU"
+#define FIREBASE_HOST "url_from_firebase"
+#define FIREBASE_API_KEY "Web_API_Key"
 #define FIREBASE_EMAIL "bookvending@gmail.com"
 #define FIREBASE_PASSWORD "bookvending"
 
@@ -35,8 +35,8 @@ int button4 = 25;
 #define RST_PIN 22
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-String authorizedUID1 = "F380FA2E";
-String authorizedUID2 = "B3876AF5";
+String authorizedUID1 = "UID_of_RFID_Card1";
+String authorizedUID2 = "UID_of_RFID_Card2";
 String currentUser = "";
 bool userAuthorized = false;
 bool bookTaken = false;
@@ -125,13 +125,13 @@ void checkRFID() {
   Serial.println("RFID UID: " + uid);
 
   if (uid == authorizedUID1) {
-    currentUser = "Shabari";
+    currentUser = "Student 1";
     userAuthorized = true;
     bookTaken = false;
     Serial.println("Access Granted: Shabari");
   }
   else if (uid == authorizedUID2) {
-    currentUser = "Kishore";
+    currentUser = "Student 2";
     userAuthorized = true;
     bookTaken = false;
     Serial.println("Access Granted: Kishore");
