@@ -6,8 +6,8 @@
 #include <MFRC522.h>
 
 // WiFi Credentials
-#define WIFI_SSID "Redmi Note 7 Pro"
-#define WIFI_PASSWORD "rohithaa"
+#define WIFI_SSID "Galaxy A15 5G DC21"
+#define WIFI_PASSWORD "#Alwaysdo11"
 
 // Firebase Credentials
 #define FIREBASE_HOST "book-vending-52801-default-rtdb.asia-southeast1.firebasedatabase.app"
@@ -37,6 +37,8 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 String authorizedUID1 = "F380FA2E";
 String authorizedUID2 = "B3876AF5";
+String authorizedUID3 = "63B511F7";
+String authorizedUID4 = "63A16930";
 String currentUser = "";
 bool userAuthorized = false;
 bool bookTaken = false;
@@ -108,7 +110,7 @@ void loop() {
   }
   else if (digitalRead(button4) == LOW) {
     Serial.println("Button 4 Pressed");
-    dispenseBook(180, "Book4");
+    dispenseBook(170, "Book4");
   }
 }
 
@@ -131,10 +133,22 @@ void checkRFID() {
     Serial.println("Access Granted: Rohith");
   }
   else if (uid == authorizedUID2) {
-    currentUser = "Siddarth";
+    currentUser = "Sidharth";
     userAuthorized = true;
     bookTaken = false;
     Serial.println("Access Granted: Siddarth");
+  }
+  else if (uid == authorizedUID3) {
+    currentUser = "Shabari";
+    userAuthorized = true;
+    bookTaken = false;
+    Serial.println("Access Granted: Shabari");
+  }
+  else if (uid == authorizedUID4) {
+    currentUser = "Kishore";
+    userAuthorized = true;
+    bookTaken = false;
+    Serial.println("Access Granted: Kishore");
   }
   else {
     Serial.println("Access Denied");
@@ -155,16 +169,18 @@ void checkRFID() {
 void dispenseBook(int rotationAngle, String bookName) {
   if (rotationAngle > 0) {
     mg996r.write(rotationAngle);
-    delay(1000);
+    delay(2000);
   }
-  mg90s.write(50);
-  delay(1000);
+  mg90s.write(120);
+  delay(500);
+  mg90s.write(0);
+  delay(2000);
   mg996r.write(0);
   sendToFirebase(currentUser, bookName);
-  mg90s.write(0);
   delay(1000);
   bookTaken = true;
   userAuthorized = false;
+  
   currentUser = "";
   Serial.println("Please scan your RFID again for next book.");
 }
@@ -204,14 +220,3 @@ void resetSession() {
   bookTaken = false;
   currentUser = "";
 }
-
-
-
-
-
-
-
-
-
-
-
