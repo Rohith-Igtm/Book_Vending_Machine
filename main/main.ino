@@ -10,8 +10,8 @@
 #define WIFI_PASSWORD "#Alwaysdo11"
 
 // Firebase Credentials
-#define FIREBASE_HOST "book-vending-52801-default-rtdb.asia-southeast1.firebasedatabase.app"
-#define FIREBASE_API_KEY "AIzaSyCyNs09bLpZ_t9KSTDkXAEv5fH6JuqQluU"
+#define FIREBASE_HOST "book-vending-machine-default-rtdb.asia-southeast1.firebasedatabase.app" 
+#define FIREBASE_API_KEY "AIzaSyBeY6dU7hVHGILzATtLCs269Q6MEvhsm_o"
 #define FIREBASE_EMAIL "bookvending@gmail.com"
 #define FIREBASE_PASSWORD "bookvending"
 
