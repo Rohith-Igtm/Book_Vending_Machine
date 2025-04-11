@@ -4,208 +4,179 @@
   <title>Book Vending Logs</title>
   <script type="module">
       document.addEventListener("DOMContentLoaded", function () {
-  setTimeout(() => {
-    const preloader = document.querySelector(".preloader");
-    const mainContent = document.querySelector(".main-content");
-    
-    if (preloader) {
-      preloader.classList.add("fade-out");
-      setTimeout(() => {
-        preloader.style.display = "none";
-        if (mainContent) {
-          mainContent.style.display = "block";
+        setTimeout(() => {
+          const preloader = document.querySelector(".preloader");
+          const mainContent = document.querySelector(".main-content");
+
+          if (preloader) {
+            preloader.classList.add("fade-out");
+            setTimeout(() => {
+              preloader.style.display = "none";
+              if (mainContent) {
+                mainContent.style.display = "block";
+              }
+            }, 500);
+          }
+        }, 1000);
+      });
+
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import { getDatabase, ref, query, orderByChild, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+      // Firebase configuration is now expected from config.js
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      const logsQuery = query(ref(db, 'logs'), orderByChild('timestamp'));
+
+      onValue(logsQuery, (snapshot) => {
+        const data = snapshot.val();
+        const tableBody = document.getElementById("logTableBody");
+        tableBody.innerHTML = "";
+
+        if (data) {
+          const entries = Object.entries(data)
+            .map(([key, value]) => ({
+              student: value.student || "Unknown",
+              book: value.book || "Unknown",
+              timestamp: value.timestamp || "N/A",
+            }))
+            .reverse();
+
+          entries.forEach(entry => {
+            const formattedTime = entry.timestamp !== "N/A"
+              ? new Date(entry.timestamp).toLocaleString()
+              : "N/A";
+
+            const row = `<tr>
+                          <td>${entry.student}</td>
+                          <td>${entry.book}</td>
+                          <td>${formattedTime}</td>
+                        </tr>`;
+            tableBody.innerHTML += row;
+          });
+        } else {
+          tableBody.innerHTML = "<tr><td colspan='3'>No data found</td></tr>";
         }
-      }, 500);
-    }
-  }, 1000);
-});
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getDatabase, ref, query, orderByChild, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBeY6dU7hVHGILzATtLCs269Q6MEvhsm_o",
-      authDomain: "book-vending-machine.firebaseapp.com",
-      databaseURL: "https://book-vending-machine-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "book-vending-machine",
-      storageBucket: "book-vending-machine.firebasestorage.app",
-      messagingSenderId: "647615785107",
-      appId: "1:647615785107:web:a4ad99b589cbf911790566"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // Create a query that orders logs by the timestamp field
-    const logsQuery = query(ref(db, 'logs'), orderByChild('timestamp'));
-
-    onValue(logsQuery, (snapshot) => {
-      const data = snapshot.val();
-      const tableBody = document.getElementById("logTableBody");
-      tableBody.innerHTML = "";
-
-      if (data) {
-        // Convert the object of logs to an array of entries
-        const entries = Object.entries(data)
-          .map(([key, value]) => ({
-            student: value.student || "Unknown",
-            book: value.book || "Unknown",
-            timestamp: value.timestamp || "N/A",
-          }));
-        
-        // Reverse the array to display the latest entries first
-        entries.reverse();
-        
-        // Populate the table with log entries
-        entries.forEach(entry => {
-          const formattedTime = entry.timestamp !== "N/A"
-            ? new Date(entry.timestamp).toLocaleString()
-            : "N/A";
-
-          const row = `<tr>
-                        <td>${entry.student}</td>
-                        <td>${entry.book}</td>
-                        <td>${formattedTime}</td>
-                      </tr>`;
-          tableBody.innerHTML += row;
-        });
-      } else {
-        tableBody.innerHTML = "<tr><td colspan='3'>No data found</td></tr>";
-      }
-    });
+      });
   </script>
+  <script src="config.js"></script>
   <style>
     body { 
-  font-family: 'Poppins', sans-serif; 
-  padding: 20px; 
-  background-color: #71ce8a;
-  color: #f5f8f8;
-}
-h2 { 
-  text-align: center; 
-  font-weight: 600;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-table { 
-  width: 100%; 
-  border-collapse: collapse; 
-  margin-top: 20px; 
-  background-color: #fff; 
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-th, td { 
-  padding: 12px; 
-  border-bottom: 1px solid #ddd; 
-  text-align: center; 
-}
-
-th { 
-  background-color: #0077b6; 
-  color: white;
-  font-size: 18px;
-  letter-spacing: 1px;
-}
-
-td {
-  color: #333;
-  font-size: 16px;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-}
-
-.preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.preloader-content {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.preloader img {
-  width: 100%;
-  height: auto;
-  animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-  0% { opacity: 0.5; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1.1); }
-}
-
-.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.main-content {
-  display: none;
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-@media (max-width: 768px) {
-  table {
-    font-size: 14px;
-  }
-  th, td {
-    padding: 8px;
-  }
-  h2 {
-    font-size: 24px;
-  }
-}
-
+      font-family: 'Poppins', sans-serif; 
+      padding: 20px; 
+      background-color: #71ce8a;
+      color: #f5f8f8;
+    }
+    h2 { 
+      text-align: center; 
+      font-weight: 600;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 20px; 
+      background-color: #fff; 
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    th, td { 
+      padding: 12px; 
+      border-bottom: 1px solid #ddd; 
+      text-align: center; 
+    }
+    th { 
+      background-color: #0077b6; 
+      color: white;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+    td {
+      color: #333;
+      font-size: 16px;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .preloader-content {
+      width: 300px;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .preloader img {
+      width: 100%;
+      height: auto;
+      animation: glow 1.5s infinite alternate;
+    }
+    @keyframes glow {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+    .fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .main-content {
+      display: none;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
+      }
+      th, td {
+        padding: 8px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
 <body>
-    <div class="preloader">
-        <div class="preloader-content">
-          <img src="https://raw.githubusercontent.com/Rohith-Igtm/Book_Vending_Machine/refs/heads/main/bookvend.jpg" alt="Loading..." class="shining-logo">
-        </div>
-      </div>
-    
-      <div class="main-content" style="display: none;">
-        <h2>📚 Book Vending Machine Logs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Book</th>
-              <th>Timestamp</th>
-            </tr>
-          </thead>
-          <tbody id="logTableBody">
-            <tr><td colspan="3">Loading data...</td></tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="preloader">
+    <div class="preloader-content">
+      <img src="https://raw.githubusercontent.com/Rohith-Igtm/Book_Vending_Machine/refs/heads/main/bookvend.jpg" alt="Loading..." class="shining-logo">
+    </div>
+  </div>
+  <div class="main-content" style="display: none;">
+    <h2>Book Vending Machine Logs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Book</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="logTableBody">
+        <tr><td colspan="3">Loading data...</td></tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
-
