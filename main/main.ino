@@ -6,12 +6,12 @@
 #include <MFRC522.h>
 
 // WiFi Credentials
-#define WIFI_SSID "Galaxy A15 5G DC21"
-#define WIFI_PASSWORD "#Alwaysdo11"
+#define WIFI_SSID "wifi name"
+#define WIFI_PASSWORD "wifi password"
 
 // Firebase Credentials
-#define FIREBASE_HOST "book-vending-machine-default-rtdb.asia-southeast1.firebasedatabase.app" 
-#define FIREBASE_API_KEY "AIzaSyBeY6dU7hVHGILzATtLCs269Q6MEvhsm_o"
+#define FIREBASE_HOST "url" 
+#define FIREBASE_API_KEY "apikey"
 #define FIREBASE_EMAIL "bookvending@gmail.com"
 #define FIREBASE_PASSWORD "bookvending"
 
